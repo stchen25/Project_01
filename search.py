@@ -73,10 +73,11 @@ def tinyMazeSearch(problem):
     return  [s, s, w, s, w, w, s, w]
 
 class Node:
-    def __init__(self, state, action, parent):
+    def __init__(self, state, action, parent, cost):
         self.parent = parent
         self.state = state
         self.action = action
+        self.cost = cost
 
 def getSolution(node):
     path = []
@@ -108,7 +109,7 @@ def depthFirstSearch(problem):
     #print("Start:", problem.getStartState())
     #print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     #print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    node = Node(state = problem.getStartState(), action = None, parent = None) #https://stackoverflow.com/questions/12864004/tracing-and-returning-a-path-in-depth-first-search
+    node = Node(state = problem.getStartState(), action = None, parent = None, cost = None) #https://stackoverflow.com/questions/12864004/tracing-and-returning-a-path-in-depth-first-search
     path = []
     if problem.isGoalState(node.state):
         return path
@@ -140,7 +141,7 @@ def depthFirstSearch(problem):
             
         
            # print("h")
-            child = Node(state = succ, action = ac, parent = node)
+            child = Node(state = succ, action = ac, parent = node, cost = None)
             if child.state not in explored:
                 
                 
@@ -158,7 +159,7 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    node = Node(state = problem.getStartState(), action = None, parent = None) #https://stackoverflow.com/questions/12864004/tracing-and-returning-a-path-in-depth-first-search
+    node = Node(state = problem.getStartState(), action = None, parent = None, cost = None) #https://stackoverflow.com/questions/12864004/tracing-and-returning-a-path-in-depth-first-search
     path = []
     if problem.isGoalState(node.state):
         return path
@@ -191,7 +192,7 @@ def breadthFirstSearch(problem):
             
         
            # print("h")
-            child = Node(state = succ, action = ac, parent = node)
+            child = Node(state = succ, action = ac, parent = node, cost = None)
             if child.state not in explored:
                 explored.add(child.state)
                 
@@ -201,8 +202,40 @@ def breadthFirstSearch(problem):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    node= Node(state=problem.getStartState(), action = None, parent = None, cost = 0)
+    frontier = util.PriorityQueue()
+    path = []
+    explored = set([])
+    explored.add(node.state)
+    if problem.isGoalState(node.state):
+        return path
+    frontier.push(node, 0)
+    #print("entering loop")
+    while True:
+        if frontier.isEmpty():
+            #print("no path")
+            return []
+        node = frontier.pop()
+        if problem.isGoalState(node.state):
+            path=getSolution(node)
+            return path
+        i = 0
+        t = problem.getSuccessors(node.state)
+        explored.add(node.state)
+        for x in t:
+           # print(x)
+            succ = x[0]
+            ac = x[1]
+            co = x[2]
+            i = i + 1
+           # print(i)
+
+            
+           # print("h")
+            child = Node(state = succ, action = ac, parent = node, cost = co)
+            if child.state not in explored:
+                explored.add(node.state)
+                frontier.push(child, co)   
 
 def nullHeuristic(state, problem=None):
     """
