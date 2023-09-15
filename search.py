@@ -158,7 +158,6 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
     node = Node(state = problem.getStartState(), action = None, parent = None) #https://stackoverflow.com/questions/12864004/tracing-and-returning-a-path-in-depth-first-search
     path = []
     if problem.isGoalState(node.state):
@@ -166,6 +165,7 @@ def breadthFirstSearch(problem):
     frontier = util.Queue()
     frontier.push(node)
     explored = set([])
+    explored.add(node.state)
     #print("entering loop")
     while True:
         if frontier.isEmpty():
@@ -173,19 +173,30 @@ def breadthFirstSearch(problem):
             return []
        
         node = frontier.pop()
-
-        explored.add(node.state)
-        for succ, ac, cos in problem.getSuccessors(node.state):
-           # print("yuh")
-            child = Node(state = succ, action = ac, parent = node)
-            if (child.state not in explored):
-                if problem.isGoalState(child.state):
+        if problem.isGoalState(node.state):
                    # print("found")
-                   path = getSolution(child)
-                   #print(type(path), "ohmygpt")
+                   path = getSolution(node)
                    return path
-                    
+                   
+        
+        i = 0
+        t = problem.getSuccessors(node.state)
+        #print(t)
+        for x in t:
+           # print(x)
+            succ = x[0]
+            ac = x[1]
+            i = i + 1
+           # print(i)
+            
+        
+           # print("h")
+            child = Node(state = succ, action = ac, parent = node)
+            if child.state not in explored:
+                explored.add(child.state)
+                
                 frontier.push(child)
+    
     
 
 def uniformCostSearch(problem):
