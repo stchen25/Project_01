@@ -107,7 +107,7 @@ def depthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
     #print("Start:", problem.getStartState())
     #print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    #print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     node = Node(state = problem.getStartState(), action = None, parent = None) #https://stackoverflow.com/questions/12864004/tracing-and-returning-a-path-in-depth-first-search
     path = []
     if problem.isGoalState(node.state):
@@ -122,7 +122,11 @@ def depthFirstSearch(problem):
             return []
        
         node = frontier.pop()
-
+        if problem.isGoalState(node.state):
+                   # print("found")
+                   path = getSolution(node)
+                   return path
+                   
         explored.add(node.state)
         i = 0
         t = problem.getSuccessors(node.state)
@@ -138,13 +142,9 @@ def depthFirstSearch(problem):
            # print("h")
             child = Node(state = succ, action = ac, parent = node)
             if child.state not in explored:
-                if problem.isGoalState(child.state):
-                   # print("found")
-                   path = getSolution(child)
-                   return path
-                   
-                else:
-                    frontier.push(child)
+                
+                
+                frontier.push(child)
     
 
             
