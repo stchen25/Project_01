@@ -82,11 +82,12 @@ def getSolution(node):
     path = []
     temp = node
     while (temp.parent != None):
+        #print("advanced")
         path.append(temp.action)
         temp = temp.parent
-    print(path)
-    newPath =  path.reverse()
-    print(newPath)
+    print(path, "path")
+    newPath = path[::-1]
+    print("\n",newPath,"actual path")
     return newPath
 
 def depthFirstSearch(problem):
@@ -129,7 +130,9 @@ def depthFirstSearch(problem):
             if child.state not in explored:
                 if problem.isGoalState(child.state):
                    # print("found")
-                    return getSolution(child)
+                   path = getSolution(child)
+                   print(type(path), "ohmygpt")
+                   return path
                     
                 frontier.push(child)
 
