@@ -72,6 +72,23 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+class Node:
+    def __init__(self, state, action, parent):
+        self.parent = parent
+        self.state = state
+        self.action = action
+
+def getSolution(node):
+    path = []
+    temp = node
+    while (temp.parent != None):
+        path.append(temp.action)
+        temp = temp.parent
+    print(path)
+    newPath =  path.reverse()
+    print(newPath)
+    return newPath
+
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
@@ -87,7 +104,42 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #print("Start:", problem.getStartState())
+    #print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    #print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    node = Node(state = problem.getStartState(), action = None, parent = None) #https://stackoverflow.com/questions/12864004/tracing-and-returning-a-path-in-depth-first-search
+    path = []
+    if problem.isGoalState(node.state):
+        return path
+    frontier = util.Stack()
+    frontier.push(node)
+    explored = set([])
+    #print("entering loop")
+    while True:
+        if frontier.isEmpty():
+            #print("no path")
+            return []
+       
+        node = frontier.pop()
+
+        explored.add(node.state)
+        for succ, ac, cos in problem.getSuccessors(node.state):
+           # print("yuh")
+            child = Node(state = succ, action = ac, parent = node)
+            if child.state not in explored:
+                if problem.isGoalState(child.state):
+                   # print("found")
+                    return getSolution(child)
+                    
+                frontier.push(child)
+
+            
+           
+
+            
+            
+        
+    
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
