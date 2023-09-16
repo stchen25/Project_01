@@ -143,8 +143,6 @@ def depthFirstSearch(problem):
            # print("h")
             child = Node(state = succ, action = ac, parent = node, cost = None)
             if child.state not in explored:
-                
-                
                 frontier.push(child)
     
 
@@ -202,40 +200,42 @@ def breadthFirstSearch(problem):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    node= Node(state=problem.getStartState(), action = None, parent = None, cost = 0)
-    frontier = util.PriorityQueue()
+    node = Node(state = problem.getStartState(), action = None, parent = None, cost = 0) 
     path = []
+    #if problem.isGoalState(node.state):
+     #   return path
+    frontier = util.PriorityQueue()
+    frontier.push(node, 0)
     explored = set([])
     explored.add(node.state)
-    if problem.isGoalState(node.state):
-        return path
-    frontier.push(node, 0)
     #print("entering loop")
-    while True:
+    
+    #print("entering loop")
+    while True:        
         if frontier.isEmpty():
             #print("no path")
             return []
         node = frontier.pop()
-        if problem.isGoalState(node.state):
-            path=getSolution(node)
-            return path
-        i = 0
-        t = problem.getSuccessors(node.state)
         explored.add(node.state)
-        for x in t:
-           # print(x)
-            succ = x[0]
-            ac = x[1]
-            co = x[2]
-            i = i + 1
-           # print(i)
 
-            
-           # print("h")
-            child = Node(state = succ, action = ac, parent = node, cost = co)
+        if problem.isGoalState(node.state):
+            path = getSolution(node)
+            return path
+        for succ, ac, co in problem.getSuccessors(node.state) :  
+            #have to check which succ has the lowest cost. can't figure out how to comp costs
+
+            child = Node(state = succ, action = ac, parent = node, cost = co + node.cost)#keep track of the total cost
             if child.state not in explored:
-                explored.add(node.state)
-                frontier.push(child, co)   
+                frontier.push(child, co) 
+            #going to to nodes already explored??
+        explored.add(child.state)        
+
+                
+
+
+    
+             
+ 
 
 def nullHeuristic(state, problem=None):
     """
@@ -246,8 +246,43 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    node = Node(state = problem.getStartState(), action = None, parent = None, cost = None)
+    if problem.isGoalState(node.state):
+        return path
+    frontier = util.PriorityQueueWithFunction(nullHeuristic(node.state, problem))
+    frontier.push(node)
+    explored = set([])
+    explored.add(node.state)
+    #print("entering loop")
+    while True:
+        if frontier.isEmpty():
+            #print("no path")
+            return []
+       
+        node = frontier.pop()
+        if problem.isGoalState(node.state):
+                   # print("found")
+                   path = getSolution(node)
+                   return path
+                   
+        
+        i = 0
+        t = problem.getSuccessors(node.state)
+        #print(t)
+        for x in t:
+           # print(x)
+            succ = x[0]
+            ac = x[1]
+            i = i + 1
+           # print(i)
+            
+        
+           # print("h")
+            child = Node(state = succ, action = ac, parent = node, cost = None)
+            if child.state not in explored:
+                explored.add(child.state)
+                
+            frontier.push(child)    
 
 
 # Abbreviations
