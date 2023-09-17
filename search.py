@@ -288,47 +288,69 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    node= Node(state=problem.getStartState(), action = None, parent = None, cost = 0)
+    startstate = (problem.getStartState(), [], 0)
     frontier = util.PriorityQueue()
     path = []
     explored = set([])
-    #explored.add(node.state)
-    
-    
-    frontier.push(node, 0)
-    #print("entering loop")
-    #secondtoLast = Node(state = None, action = None, parent = None, cost = None)
+  
+    frontier.push(startstate, startstate[2])
     while True:
-        #print("looped")
         if frontier.isEmpty():
-            #print("no path")
             return []
         node = frontier.pop()
-        #explored.add(node.state)
-        if problem.isGoalState(node.state):
-            #print(node.parent.state)
-            #node.parent = secondtoLast
-            path=getSolution(node) 
-            return path
-        i = 0
-        if node.state not in explored:
-            explored.add(node.state)
+        #print(node[0], node[1], node[2])
         
-        #print(t)
+        #explored.add(node[0])
+        if node[0] not in explored:
+            explored.add(node[0])
+            if problem.isGoalState(node[0]):
+                return node[1]
+            for succ, ac, co in problem.getSuccessors(node[0]):
+            #print(type(states[node][0]))
+           # print(node[1])
+                child = (succ, node[1] + [ac], node[2] + co + heuristic(succ, problem))
             
-        #explored.add(node.state)
-            for succ, ac, co in problem.getSuccessors(node.state):
-           # print(x)
-            #print(succ)
-                i = i + 1
-            #print(succ, " ", co)
-                print(succ, heuristic(succ, problem))
-                child = Node(state = succ, action = ac, parent = node, cost = co + node.cost + heuristic(succ, problem))
-            #secondtoLast = node
-            #children.append((child, child.cost))
-                if child.state not in explored:
-                #explored.add(child.state)
-                    frontier.update(child, child.cost)
+            #child[2] = node[2] + co
+                if child[0] not in explored:
+
+                    frontier.update(child, child[2])
+
+# def aStarSearch(problem, heuristic=nullHeuristic):
+#     node= Node(state=problem.getStartState(), action = None, parent = None, cost = 0)
+#     frontier = util.PriorityQueue()
+#     path = []
+#     explored = set([])
+   
+    
+    
+#     frontier.push(node, 0)
+   
+#     while True:
+       
+#         if frontier.isEmpty():
+          
+#             return []
+#         node = frontier.pop()
+       
+#         if problem.isGoalState(node.state):
+           
+#                 path=getSolution(node) 
+#                 return path
+ 
+#         if node.state not in explored:
+#             explored.add(node.state)
+            
+        
+       
+            
+      
+#             for succ, ac, co in problem.getSuccessors(node.state):       
+               
+#                 child = Node(state = succ, action = ac, parent = node, cost = co + node.cost + heuristic(succ, problem))
+         
+#                 if child.state not in explored:
+             
+#                     frontier.update(child, child.cost)
 
 
 # Abbreviations
