@@ -19,6 +19,7 @@ Pacman agents (in searchAgents.py).
 
 import util
 
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -83,7 +84,7 @@ def getSolution(node):
     path = []
     temp = node
     while (temp.parent != None):
-        #print("advanced")
+        #print(temp.state)
         path.append(temp.action)
         temp = temp.parent
     #print(path, "path")
@@ -142,9 +143,7 @@ def depthFirstSearch(problem):
         
            # print("h")
             child = Node(state = succ, action = ac, parent = node, cost = None)
-            if child.state not in explored:
-                
-                
+            if child.state not in explored:     
                 frontier.push(child)
     
 
@@ -197,8 +196,37 @@ def breadthFirstSearch(problem):
                 explored.add(child.state)
                 
                 frontier.push(child)
+   
+        
+
+# def uniformCostSearch(problem):
     
-    
+#     startstate = (problem.getStartState(), [], 0)
+#     frontier = util.PriorityQueue()
+#     path = []
+#     explored = set([])
+  
+#     frontier.push(startstate, startstate[2])
+#     while True:
+#         if frontier.isEmpty():
+#             return []
+#         node = frontier.pop()
+#         #print(node[0], node[1], node[2])
+#         if problem.isGoalState(node[0]):
+#             return node[1]
+#         #explored.add(node[0])
+#         if node[0] not in explored:
+#             explored.add(node[0])
+#             for succ, ac, co in problem.getSuccessors(node[0]):
+#             #print(type(states[node][0]))
+#            # print(node[1])
+#                 child = (succ, node[1] + [ac], node[2] + co)
+            
+#             #child[2] = node[2] + co
+            
+#                 if succ not in explored:
+#                     frontier.update(child, child[2])
+        
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
@@ -206,38 +234,50 @@ def uniformCostSearch(problem):
     frontier = util.PriorityQueue()
     path = []
     explored = set([])
-    explored.add(node.state)
-    if problem.isGoalState(node.state):
-        return path
+    #explored.add(node.state)
+    
+    
     frontier.push(node, 0)
     #print("entering loop")
+    #secondtoLast = Node(state = None, action = None, parent = None, cost = None)
     while True:
+        #print("looped")
         if frontier.isEmpty():
             #print("no path")
             return []
         node = frontier.pop()
+        #explored.add(node.state)
         if problem.isGoalState(node.state):
-            path=getSolution(node)
+            #print(node.parent.state)
+            #node.parent = secondtoLast
+            path=getSolution(node) 
             return path
         i = 0
-        #explored.add(node.state)
-        t = problem.getSuccessors(node.state)
-        #explored.add(node.state)
-        for x in t:
-           # print(x)
-            succ = x[0]
-            ac = x[1]
-            co = x[2]
-            i = i + 1
-           # print(i)
-
+        if node.state not in explored:
+            explored.add(node.state)
+        
+        #print(t)
             
-           # print("h")
-            child = Node(state = succ, action = ac, parent = node, cost = co + node.cost)
-            #print(child.cost)
-            if child.state not in explored:   
-                explored.add(child.state)             
-                frontier.push(child, co)   
+        #explored.add(node.state)
+            for succ, ac, co in problem.getSuccessors(node.state):
+           # print(x)
+            #print(succ)
+                i = i + 1
+            #print(succ, " ", co)
+                child = Node(state = succ, action = ac, parent = node, cost = co + node.cost)
+            #secondtoLast = node
+            #children.append((child, child.cost))
+                if child.state not in explored:
+                #explored.add(child.state)
+                    frontier.update(child, child.cost)
+        
+        #children = sorted(children, key=lambda x: x[1]) #https://stackoverflow.com/questions/3121979/how-to-sort-a-list-tuple-of-lists-tuples-by-the-element-at-a-given-index
+        #print(children)
+        # for x in children:
+        #    child = x[0]
+           
+           
+        
 
 
 def nullHeuristic(state, problem=None):
@@ -248,9 +288,47 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    node= Node(state=problem.getStartState(), action = None, parent = None, cost = 0)
+    frontier = util.PriorityQueue()
+    path = []
+    explored = set([])
+    #explored.add(node.state)
+    
+    
+    frontier.push(node, 0)
+    #print("entering loop")
+    #secondtoLast = Node(state = None, action = None, parent = None, cost = None)
+    while True:
+        #print("looped")
+        if frontier.isEmpty():
+            #print("no path")
+            return []
+        node = frontier.pop()
+        #explored.add(node.state)
+        if problem.isGoalState(node.state):
+            #print(node.parent.state)
+            #node.parent = secondtoLast
+            path=getSolution(node) 
+            return path
+        i = 0
+        if node.state not in explored:
+            explored.add(node.state)
+        
+        #print(t)
+            
+        #explored.add(node.state)
+            for succ, ac, co in problem.getSuccessors(node.state):
+           # print(x)
+            #print(succ)
+                i = i + 1
+            #print(succ, " ", co)
+                print(succ, heuristic(succ, problem))
+                child = Node(state = succ, action = ac, parent = node, cost = co + node.cost + heuristic(succ, problem))
+            #secondtoLast = node
+            #children.append((child, child.cost))
+                if child.state not in explored:
+                #explored.add(child.state)
+                    frontier.update(child, child.cost)
 
 
 # Abbreviations
