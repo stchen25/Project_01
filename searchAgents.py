@@ -307,9 +307,12 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        print(self.startingPosition, self.cornerDict)
-        #return self.startingPosition
-        return self.startingPosition
+        # print(self.startingPosition, self.cornerDict)
+        # return (self.startingPosition, self.cornerDict)
+        cornList = []
+        # for x in self.corners:
+        #     cornList.append(x)
+        return (self.startingPosition, cornList)
         #util.raiseNotDefined()
 
     def isGoalState(self, state):
@@ -318,11 +321,15 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         
-        for keys in self.cornerDict.keys():   #https://www.geeksforgeeks.org/iterate-over-a-dictionary-in-python/#     to iterate over keys in a dictionary
-            if self.cornerDict[keys] == False:
-                return False
+        # for x in self.cornerDict:
+        #     if self.cornerDict[x] == False:
+        #         return False
+        if len(state[1]) == 4:
+            return True
+        return False
             
-        return True
+        #print(self.cornerDict,"yay")
+        #return True
         #util.raiseNotDefined()
 
     def getSuccessors(self, state):
@@ -341,7 +348,9 @@ class CornersProblem(search.SearchProblem):
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
             
-            x,y = state
+            x,y = state[0]
+            cornerList = state[1][:]
+            #print(cornList)
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             next = (nextx, nexty)
@@ -352,11 +361,19 @@ class CornersProblem(search.SearchProblem):
                 #cost = self.costFn(nextState)
                 #self.succCornerDict = state[1]
                 
-                if nextState in self.cornerDict.keys():
-                    self.cornerDict[nextState] = True;
-                    print(self.cornerDict)
+                if nextState in self.corners:
+                    cornerList.append(nextState)
+                    print(cornerList)
+                    #self.cornerDict[nextState] = True;
+                    #print(self.cornerDict)
+                    #print(nextState)
+                    # cornerDic[nextState] = True
+                    # print(cornerDic)
+                    #print(cornList)
                 
-                successors.append( ( nextState, action, 1) )
+                succ = ((nextState, cornerList), action, 1)
+                #print(succ)
+                successors.append(succ) 
 
             
 
