@@ -168,6 +168,7 @@ class PositionSearchProblem(search.SearchProblem):
         return self.startState
 
     def isGoalState(self, state):
+
         isGoal = state == self.goal
 
         # For display purposes only
@@ -266,6 +267,10 @@ def euclideanHeuristic(position, problem, info={}):
 # This portion is incomplete.  Time to write code!  #
 #####################################################
 
+# class state:
+#     def __init__(self, position, ):
+
+
 class CornersProblem(search.SearchProblem):
     """
     This search problem finds paths through all four corners of a layout.
@@ -273,21 +278,27 @@ class CornersProblem(search.SearchProblem):
     You must select a suitable state space and successor function
     """
 
+
+
     def __init__(self, startingGameState):
         """
         Stores the walls, pacman's starting position and corners.
         """
+        print(startingGameState)
         self.walls = startingGameState.getWalls()
         self.startingPosition = startingGameState.getPacmanPosition()
+        #print(self.startingPosition)
         top, right = self.walls.height-2, self.walls.width-2
         self.corners = ((1,1), (1,top), (right, 1), (right, top))
+        self.cornerDict = {self.corners[0] : False, self.corners[1] : False, self.corners[2] : False, self.corners[3] : False}
+        
+        #print(self.corner)
         for corner in self.corners:
             if not startingGameState.hasFood(*corner):
                 print('Warning: no food in corner ' + str(corner))
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-            
         "*** YOUR CODE HERE ***"
 
     def getStartState(self):
@@ -295,51 +306,24 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-       
-        s = self.startingPosition
-        corn = self.corners
-        c1 = corn[0]
-        c2 = corn[1]
-        c3 = corn[2]
-        c4 = corn[3]
-        #print (corn)
-        start = {s: None, c1:False, c2:False, c3:False, c4:False}
-        
-
-        return start
-
+        "*** YOUR CODE HERE ***"
+        print(self.startingPosition, self.cornerDict)
+        #return self.startingPosition
+        return self.startingPosition
+        #util.raiseNotDefined()
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
+        "*** YOUR CODE HERE ***"
         
-        s = self.startingPosition
-        corn = self.corners
-        c1 = corn[0]
-        c2 = corn[1]
-        c3 = corn[2]
-        c4 = corn[3]
-        start = [(s, None), (c1, True), (c2,False), (c3,False), (c4,False)]
-        goal = None
-        #for i in corn:
-         #   print (type(state))
-          #  for k , v in start:
-           #     if k == i:# checking the corner in start list with corner list
-            #        if self.hasFood(*i):#corner food has not been eaten
-             #           v = False
-              #      v= True
-        print (start)
-        print (corn)
-        for i , j in start:
-            print (j)
-            if j == False:
-                goal = False
-                return goal
-        goal = True
-        print (goal)
-        return goal
-        util.raiseNotDefined()
+        for keys in self.cornerDict.keys():   #https://www.geeksforgeeks.org/iterate-over-a-dictionary-in-python/#     to iterate over keys in a dictionary
+            if self.cornerDict[keys] == False:
+                return False
+            
+        return True
+        #util.raiseNotDefined()
 
     def getSuccessors(self, state):
         """
@@ -356,14 +340,25 @@ class CornersProblem(search.SearchProblem):
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-
             
-            x,y = currentPosition
+            x,y = state
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
+            next = (nextx, nexty)
             hitsWall = self.walls[nextx][nexty]
+            #print(hitsWall)
+            if not hitsWall:
+                nextState = (nextx, nexty)
+                #cost = self.costFn(nextState)
+                #self.succCornerDict = state[1]
+                
+                if nextState in self.cornerDict.keys():
+                    self.cornerDict[nextState] = True;
+                    print(self.cornerDict)
+                
+                successors.append( ( nextState, action, 1) )
 
-            "*** YOUR CODE HERE ***"
+            
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -397,6 +392,7 @@ def cornersHeuristic(state, problem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+
     "*** YOUR CODE HERE ***"
     return 0 # Default to trivial solution
 
