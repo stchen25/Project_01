@@ -321,7 +321,7 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     node= Node(state=problem.getStartState(), action = None, parent = None, cost = 0)
     frontier = util.PriorityQueue()
-    explored =[] 
+    explored =set([])
     frontier.push(node, 0)
    
     while True:
@@ -337,7 +337,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 return path
  
         if node.state not in explored:
-            explored.append(node.state)
+            explored.add(node.state)
             
         
        
