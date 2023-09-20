@@ -307,12 +307,11 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        # print(self.startingPosition, self.cornerDict)
-        # return (self.startingPosition, self.cornerDict)
-        cornList = []
-        # for x in self.corners:
-        #     cornList.append(x)
-        return (self.startingPosition, cornList)
+        print(self.startingPosition, self.cornerDict)
+        #self.cornerDict = {self.corners[0] : False, self.corners[1] : False, self.corners[2] : False, self.corners[3] : False}
+        #start = (self.startingPosition, self.cornerDict)
+        #return self.startingPosition
+        return self.startingPosition
         #util.raiseNotDefined()
 
     def isGoalState(self, state):
@@ -321,15 +320,11 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         
-        # for x in self.cornerDict:
-        #     if self.cornerDict[x] == False:
-        #         return False
-        if len(state[1]) == 4:
-            return True
-        return False
+        for keys in self.cornerDict.keys():   #https://www.geeksforgeeks.org/iterate-over-a-dictionary-in-python/#     to iterate over keys in a dictionary
+            if self.cornerDict[keys] == False:
+                return False
             
-        #print(self.cornerDict,"yay")
-        #return True
+        return True
         #util.raiseNotDefined()
 
     def getSuccessors(self, state):
@@ -348,9 +343,7 @@ class CornersProblem(search.SearchProblem):
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
             
-            x,y = state[0]
-            cornerList = state[1][:]
-            #print(cornList)
+            x,y = state
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             next = (nextx, nexty)
@@ -361,19 +354,12 @@ class CornersProblem(search.SearchProblem):
                 #cost = self.costFn(nextState)
                 #self.succCornerDict = state[1]
                 
-                if nextState in self.corners:
-                    cornerList.append(nextState)
-                    print(cornerList)
-                    #self.cornerDict[nextState] = True;
-                    #print(self.cornerDict)
-                    #print(nextState)
-                    # cornerDic[nextState] = True
-                    # print(cornerDic)
-                    #print(cornList)
+                if nextState in self.cornerDict.keys():
+                    self.cornerDict[nextState] = True;
+                    print(self.cornerDict)
                 
-                succ = ((nextState, cornerList), action, 1)
-                #print(succ)
-                successors.append(succ) 
+                
+            successors.append( ( nextState, action, 1) )    
 
             
 
@@ -411,7 +397,22 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    print (f"State:   {state}")
+    #print (corners[1][1])
+    xcurr =0
+    ycurr = 0
+    z = 0
+    for i in problem.cornerDict.keys():
+        if problem.cornerDict.get(i) == False:# if 
+           xcurr = corners[z][0]
+           ycurr = corners[z][1]
+    print (f"distance:  {abs( state[0] - xcurr ) + abs( state[1] - ycurr )}") #https://www.w3docs.com/snippets/python/how-can-i-print-variable-and-string-on-same-line-in-python.html#:~:text=You%20can%20use%20the%20print,%2B%20%22%20years%20old.%22)&text=name%20%3D%20%22John%22%20age%20%3D%2020%20print(f%22,age%7D%20years%20old.%22)
+
+    return (abs( state[0] - xcurr ) + abs( state[1] - ycurr ))
+
+
+    
+    
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
