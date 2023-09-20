@@ -149,10 +149,33 @@ def depthFirstSearch(problem):
 
             
            
+# def breadthFirstSearch(problem):
+#     startstate = (problem.getStartState(), [])
+#     if problem.isGoalState(startstate):
+#         return startstate[1]
+#     explored = set([])
+#     explored.add(startstate[0])
+#     frontier = util.Queue()
+#     frontier.push(startstate)
+#     while True:
+#         if frontier.isEmpty():
+#             return []
+#         node = frontier.pop()
+#         if problem.isGoalState(node[0]):
+#             return node[1]
+#         t = problem.getSuccessors(node[0])
+#         for x in t:
+#             succ = x[0]
+#             ac = x[1]
+#             child = (succ, node[1] + [ac])
+#             if child[0] not in explored:
+#                 explored.add(child[0])
+#                 frontier.push(child)
 
-            
-            
+
+
         
+
     
 
 def breadthFirstSearch(problem):
@@ -164,8 +187,9 @@ def breadthFirstSearch(problem):
         return path
     frontier = util.Queue()
     frontier.push(node)
-    explored = set([])
-    explored.add(node.state)
+    explored = []
+    print(node.state)
+    explored.append(node.state)
     #print("entering loop")
     while True:
         if frontier.isEmpty():
@@ -193,7 +217,7 @@ def breadthFirstSearch(problem):
            # print("h")
             child = Node(state = succ, action = ac, parent = node, cost = None)
             if child.state not in explored:
-                explored.add(child.state)
+                explored.append(child.state)
                 
                 frontier.push(child)
    
@@ -233,7 +257,7 @@ def uniformCostSearch(problem):
     node= Node(state=problem.getStartState(), action = None, parent = None, cost = 0)
     frontier = util.PriorityQueue()
     path = []
-    explored = set([])
+    explored = []
     #explored.add(node.state)
     
     
@@ -254,7 +278,7 @@ def uniformCostSearch(problem):
             return path
         i = 0
         if node.state not in explored:
-            explored.add(node.state)
+            explored.append(node.state)
         
         #print(t)
             
@@ -321,7 +345,7 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     node= Node(state=problem.getStartState(), action = None, parent = None, cost = 0)
     frontier = util.PriorityQueue()
-    explored =set([])
+    explored =[]
     frontier.push(node, 0)
    
     while True:
@@ -337,7 +361,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 return path
  
         if node.state not in explored:
-            explored.add(node.state)
+            explored.append(node.state)
             
         
        
