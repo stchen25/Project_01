@@ -278,7 +278,14 @@ class CornersProblem(search.SearchProblem):
     You must select a suitable state space and successor function
     """
 
-
+    class State:
+        def __init__(self, currPosition, cornerList):
+            self.currPosition = currPosition
+            self.cornerList = cornerList
+        
+        
+        def getCornerState(self):
+            return (self.currPosition, self.cornerList)
 
     def __init__(self, startingGameState):
         """
@@ -291,6 +298,8 @@ class CornersProblem(search.SearchProblem):
         top, right = self.walls.height-2, self.walls.width-2
         self.corners = ((1,1), (1,top), (right, 1), (right, top))
         self.cornerDict = {self.corners[0] : False, self.corners[1] : False, self.corners[2] : False, self.corners[3] : False}
+        self.cornerList = [(1,1), (1,top), (right, 1), (right, top)]
+        #self.cornerList = []
         
         #print(self.corner)
         for corner in self.corners:
@@ -307,11 +316,14 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        print(self.startingPosition, self.cornerDict)
-        #self.cornerDict = {self.corners[0] : False, self.corners[1] : False, self.corners[2] : False, self.corners[3] : False}
-        #start = (self.startingPosition, self.cornerDict)
-        #return self.startingPosition
-        return self.startingPosition
+        # print(self.startingPosition, self.cornerDict)
+        # return (self.startingPosition, self.cornerDict)
+        
+        # for x in self.corners:
+        #     cornList.append(x)
+        startstate = self.State(self.startingPosition, self.cornerDict)
+        return startstate.getCornerState()
+        #return (self.startingPosition, self.cornerList)
         #util.raiseNotDefined()
 
     def isGoalState(self, state):
@@ -320,11 +332,18 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         
-        for keys in self.cornerDict.keys():   #https://www.geeksforgeeks.org/iterate-over-a-dictionary-in-python/#     to iterate over keys in a dictionary
-            if self.cornerDict[keys] == False:
-                return False
+        # for x in self.cornerDict:
+        #     if self.cornerDict[x] == False:
+        #         return False
+        print(state)
+        currState = state
+        if len(state[1]) == 0:
+            return True
+        else:
+            return False
             
-        return True
+        #print(self.cornerDict,"yay")
+        #return True
         #util.raiseNotDefined()
 
     def getSuccessors(self, state):
@@ -343,23 +362,35 @@ class CornersProblem(search.SearchProblem):
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
             
-            x,y = state
+            x = state[0][0]
+            y = state[0][1]
+            tempList = []
+            #print(cornList)
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             next = (nextx, nexty)
             hitsWall = self.walls[nextx][nexty]
-            #print(hitsWall)
+            
             if not hitsWall:
-                nextState = (nextx, nexty)
+                for x in state[1]:
+                    if next != x:
+                        tempList.append(x)
+
+
                 #cost = self.costFn(nextState)
                 #self.succCornerDict = state[1]
                 
-                if nextState in self.cornerDict.keys():
-                    self.cornerDict[nextState] = True;
-                    print(self.cornerDict)
-                
-                
-            successors.append( ( nextState, action, 1) )    
+                    #self.cornerDict[nextState] = True;
+                    #print(self.cornerDict)
+                    #print(nextState)
+                    # cornerDic[nextState] = True
+                    # print(cornerDic)
+                    #print(cornList)
+                #print(ListCopy)
+                #corn = tuple(ListCopy)
+                succ =  self.State(next, tempList)
+                #print(succ)
+                successors.append((succ.getCornerState(), action, 1)) 
 
             
 
@@ -395,24 +426,19 @@ def cornersHeuristic(state, problem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
+    position = state
     "*** YOUR CODE HERE ***"
-    print (f"State:   {state}")
-    #print (corners[1][1])
-    xcurr =0
-    ycurr = 0
-    z = 0
-    for i in problem.cornerDict.keys():
-        if problem.cornerDict.get(i) == False:# if 
-           xcurr = corners[z][0]
-           ycurr = corners[z][1]
-    print (f"distance:  {abs( state[0] - xcurr ) + abs( state[1] - ycurr )}") #https://www.w3docs.com/snippets/python/how-can-i-print-variable-and-string-on-same-line-in-python.html#:~:text=You%20can%20use%20the%20print,%2B%20%22%20years%20old.%22)&text=name%20%3D%20%22John%22%20age%20%3D%2020%20print(f%22,age%7D%20years%20old.%22)
-
-    return (abs( state[0] - xcurr ) + abs( state[1] - ycurr ))
+    manhattandist = []
+    for corn in corners:
+        #print(position[0], " yay",corn)
+        distance = util.manhattanDistance(position[0], corn)
+        manhattandist.append(distance)
+    return min(manhattandist)
 
 
-    
-    
+
+
+    return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -505,6 +531,7 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
+
     "*** YOUR CODE HERE ***"
     return 0
 
@@ -535,9 +562,30 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
+        foodlist = food.asList()
+        print(foodlist)
+        manhattanDist = []
+        min = 9999999
+        minFood = startPosition
+        for x in foodlist:
+            distance = util.manhattanDistance(startPosition, x)
+            if distance < min:
+                min = distance
+                minFood = x
+        
+        prob = PositionSearchProblem(gameState, start = startPosition, goal = minFood, warn=False, visualize=False)
+        return search.breadthFirstSearch(prob)
+
+        
+            
+        
+        
+        
+            
+
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -558,7 +606,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         "Stores information from the gameState.  You don't need to change this."
         # Store the food for later reference
         self.food = gameState.getFood()
-
+        
         # Store info for the PositionSearchProblem (no need to change this)
         self.walls = gameState.getWalls()
         self.startState = gameState.getPacmanPosition()
@@ -570,10 +618,16 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         The state is Pacman's position. Fill this in with a goal test that will
         complete the problem definition.
         """
-        x,y = state
+        foodList = self.food.asList()
+        for x in foodList:
+            if x == True:
+                return False
+        
 
+        return True
+        
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #util.raiseNotDefined()
 
 def mazeDistance(point1, point2, gameState):
     """
