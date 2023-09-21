@@ -334,10 +334,9 @@ class CornersProblem(search.SearchProblem):
         
         # for x in self.cornerDict:
         #     if self.cornerDict[x] == False:
-        #
-        #          return False
+        #         return False
         #print(state)
-        currState = state
+        #currState = state
         if len(state[1]) == 0:
             return True
         else:
@@ -427,77 +426,30 @@ def cornersHeuristic(state, problem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
+    
+    #print(walls)
+    position = state
+    #print(position)
+    corners = position[1]
+    print(position[1])
+    if len(corners) == 0:
+        return 0
     "*** YOUR CODE HERE ***"
-    
-
-
-
-
-
-
-
-
-
-
-
-
-    #print (f"currpos:   {state[0]}")
-    
-    #print (corners[1][1])
-    z = 0
-    manhatDisList = []# list of all distances from state to corner
-    eucDisList = []
-    minMan = 0
-    minEuc = 0
-    #print (problem.cornerDict.keys())
-    for i in problem.cornerDict.keys():
-        if problem.cornerDict.get(i) == False:# if this food has not been eaten
-           #print (problem.cornerDict.get(i))
-           xcorn = corners[z][0]
-           ycorn = corners[z][1]
-           cornCoord = (xcorn, ycorn)
-           #print(cornCoord)
-           z = z + 1
-           manDis = util.manhattanDistance (state[0],cornCoord)
-           #print (state)
-           #print (f"currPos:   {state[0]}")
-           #print (f" manDist:  {manDis}")
-           manhatDisList.append(manDis)
-          # print (f" manhatDistList:  {manhatDisList}")
-           eucDis= ( (state[0][0] - cornCoord[0]) ** 2 + (state[0][1] - cornCoord[1]) ** 2 ) ** .5
-           #print (f" eucDist:  {eucDis}")
-           eucDisList.append(eucDis)
-           #print (f" eucDistList:  {eucDisList}")
-           
-    minMan = min(manhatDisList)
-    minEuc = min(eucDisList)
-    newTup = (state[0][0]+ 1, state[0][1]+1)
-    #print (newTup)
-    #print (state[0])
-    #if(newTup) in walls.asList():
-        #minMan = minMan + 5
-       # minEuc = minEuc + 5
-    #print (minEuc)
-    if (minEuc < minMan):
-         return minEuc
-    elif (minEuc == minMan):
-          return minMan
-    else :
-        return minMan
-
-
-           
-           
-            
-            
+    #take max of heuristic
+    manhattandist = []
+    #manhattandist = 0
+    for corn in corners:
+        #print(position[0], " yay",corn)
+        distance = util.manhattanDistance(position[0], corn)
+        manhattandist.append(distance)
         
+    print(manhattandist)
+    return min(manhattandist)
 
-    
 
 
-    
-    
+
+    return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -590,9 +542,19 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
+    foodList = foodGrid.asList()
+    min = 9999999
+    for x in foodList:
+        dist = util.manhattanDistance(position, x)
+        if dist < min:
+            min = dist
+        
+    return min
+
+
 
     "*** YOUR CODE HERE ***"
-    return 0
+    return min
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -681,8 +643,6 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         for x in foodList:
             if x == True:
                 return False
-        
-
         return True
         
         "*** YOUR CODE HERE ***"
